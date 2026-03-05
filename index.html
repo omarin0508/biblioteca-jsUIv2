@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Biblioteca Personal</title>
+
+  <style>
+    body { font-family: Arial, sans-serif; background:#f4f4f4; padding:40px; }
+    .container { max-width: 700px; margin:auto; background:#fff; padding:24px; border-radius:12px; }
+    h1 { margin-top:0; }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    input { width:100%; padding:10px; border:1px solid #ccc; border-radius:8px; }
+    button { padding:10px 14px; border:0; border-radius:8px; cursor:pointer; }
+    .btn { background:#2c7be5; color:#fff; width:100%; margin-top:12px; }
+    .row { display:flex; gap:10px; margin-top:10px; }
+    .row button { flex:1; }
+    ul { padding-left:18px; }
+    li { margin: 8px 0; }
+    .tag { font-size:12px; padding:2px 8px; border-radius:20px; background:#eee; margin-left:8px; }
+    .prestado { background:#ffe2e2; }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Biblioteca Personal</h1>
+    <p>Agrega libros y míralos en pantalla (y también en consola).</p>
+
+    <div class="grid">
+      <input id="titulo" placeholder="Título" />
+      <input id="autor" placeholder="Autor" />
+      <input id="genero" placeholder="Género" />
+      <input id="anio" placeholder="Año (ej: 1943)" />
+    </div>
+
+    <button class="btn" id="btnAgregar">Agregar libro</button>
+
+    <div class="row">
+      <button id="btnMostrar">Mostrar en consola</button>
+      <button id="btnTable">Ver tabla en consola</button>
+    </div>
+
+    <h2>Lista de libros</h2>
+    <ul id="listaLibros"></ul>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
