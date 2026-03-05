@@ -4,7 +4,7 @@ BIBLIOTECA PERSONAL EN JAVASCRIPT
 - Clases: Libro, Biblioteca
 - Arreglos: this.libros
 - Funciones/Métodos: agregar, listar, buscar, eliminar, prestar, devolver
-- UI: formulario + lista en HTML
+- UI: formulario + tabla en HTML
 =========================================
 */
 
@@ -104,10 +104,13 @@ miBiblioteca.agregarLibro(new Libro("Cien años de soledad", "Gabriel García M�
 
 /*
 =========================================
-UI (DOM): pintar libros en la página
+UI (DOM): tabla en la página
 =========================================
 */
-const listaLibrosEl = document.getElementById("listaLibros")
+const tablaLibrosEl = document.getElementById("tablaLibros")
+const cuerpoTablaEl = document.getElementById("cuerpoTabla")
+const msgVacioEl = document.getElementById("msgVacio")
+
 const tituloEl = document.getElementById("titulo")
 const autorEl = document.getElementById("autor")
 const generoEl = document.getElementById("genero")
@@ -117,44 +120,78 @@ const btnAgregar = document.getElementById("btnAgregar")
 const btnMostrar = document.getElementById("btnMostrar")
 const btnTable = document.getElementById("btnTable")
 
-function renderLista() {
-  // Limpiar
-  listaLibrosEl.innerHTML = ""
+function renderTabla() {
+  // Limpiar cuerpo de tabla
+  cuerpoTablaEl.innerHTML = ""
+
+  // Si está vacío: oculto tabla, muestro mensaje
+  if (miBiblioteca.libros.length === 0) {
+    tablaLibrosEl.style.display = "none"
+    msgVacioEl.style.display = "block"
+    return
+  }
+
+  // Si hay libros: muestro tabla, oculto mensaje
+  tablaLibrosEl.style.display = "table"
+  msgVacioEl.style.display = "none"
 
   miBiblioteca.libros.forEach((libro) => {
-    const li = document.createElement("li")
-    li.textContent = libro.describir()
+    const fila = document.createElement("tr")
 
-    // Etiqueta prestado / disponible
-    const tag = document.createElement("span")
-    tag.className = "tag" + (libro.prestado ? " prestado" : "")
-    tag.textContent = libro.prestado ? "Prestado" : "Disponible"
-    li.appendChild(tag)
+    const estadoHTML = libro.prestado
+      ? `<span class="tag tag-bad">Prestado</span>`
+      : `<span class="tag tag-ok">Disponible</span>`
 
-    // Botón Prestar/Devolver
-    const btnPD = document.createElement("button")
-    btnPD.textContent = libro.prestado ? "Devolver" : "Prestar"
-    btnPD.style.marginLeft = "10px"
-    btnPD.onclick = () => {
-      if (libro.prestado) miBiblioteca.devolverLibro(libro.titulo)
-      else miBiblioteca.prestarLibro(libro.titulo)
-      renderLista()
-    }
-    li.appendChild(btnPD)
+    // Acciones: Prestar/Devolver + Eliminar
+    const accionesHTML = `
+      <div class="acciones">
+        <button class="btnMini ${libro.prestado ? "btnDevolver" : "btnPrestar"}" data-accion="toggle" data-titulo="${libro.titulo}">
+          ${libro.prestado ? "Devolver" : "Prestar"}
+        </button>
+        <button class="btnMini btnEliminar" data-accion="eliminar" data-titulo="${libro.titulo}">
+          Eliminar
+        </button>
+      </div>
+    `
 
-    // Botón Eliminar
-    const btnDel = document.createElement("button")
-    btnDel.textContent = "Eliminar"
-    btnDel.style.marginLeft = "8px"
-    btnDel.onclick = () => {
-      miBiblioteca.eliminarPorTitulo(libro.titulo)
-      renderLista()
-    }
-    li.appendChild(btnDel)
+    fila.innerHTML = `
+      <td>${libro.titulo}</td>
+      <td>${libro.autor}</td>
+      <td>${libro.genero}</td>
+      <td>${libro.anio}</td>
+      <td>${estadoHTML}</td>
+      <td>${accionesHTML}</td>
+    `
 
-    listaLibrosEl.appendChild(li)
+    cuerpoTablaEl.appendChild(fila)
   })
 }
+
+/* Delegación de eventos:
+   Un solo listener para todos los botones de la tabla */
+cuerpoTablaEl.addEventListener("click", (e) => {
+  const btn = e.target.closest("button")
+  if (!btn) return
+
+  const accion = btn.dataset.accion
+  const titulo = btn.dataset.titulo
+  if (!accion || !titulo) return
+
+  if (accion === "toggle") {
+    const libro = miBiblioteca.buscarPorTitulo(titulo)
+    if (!libro) return
+
+    if (libro.prestado) miBiblioteca.devolverLibro(titulo)
+    else miBiblioteca.prestarLibro(titulo)
+
+    renderTabla()
+  }
+
+  if (accion === "eliminar") {
+    miBiblioteca.eliminarPorTitulo(titulo)
+    renderTabla()
+  }
+})
 
 function agregarLibroDesdeFormulario() {
   const titulo = tituloEl.value.trim()
@@ -175,13 +212,13 @@ function agregarLibroDesdeFormulario() {
   generoEl.value = ""
   anioEl.value = ""
 
-  renderLista()
+  renderTabla()
 }
 
-// Eventos
+// Eventos (formularios / consola)
 btnAgregar.addEventListener("click", agregarLibroDesdeFormulario)
 btnMostrar.addEventListener("click", () => miBiblioteca.mostrarLibros())
 btnTable.addEventListener("click", () => console.table(miBiblioteca.libros))
 
 // Primera pintada
-renderLista()
+renderTabla()

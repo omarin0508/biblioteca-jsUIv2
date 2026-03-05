@@ -6,7 +6,7 @@
 
   <style>
     body { font-family: Arial, sans-serif; background:#f4f4f4; padding:40px; }
-    .container { max-width: 700px; margin:auto; background:#fff; padding:24px; border-radius:12px; }
+    .container { max-width: 900px; margin:auto; background:#fff; padding:24px; border-radius:12px; }
     h1 { margin-top:0; }
     .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     input { width:100%; padding:10px; border:1px solid #ccc; border-radius:8px; }
@@ -14,10 +14,40 @@
     .btn { background:#2c7be5; color:#fff; width:100%; margin-top:12px; }
     .row { display:flex; gap:10px; margin-top:10px; }
     .row button { flex:1; }
-    ul { padding-left:18px; }
-    li { margin: 8px 0; }
-    .tag { font-size:12px; padding:2px 8px; border-radius:20px; background:#eee; margin-left:8px; }
-    .prestado { background:#ffe2e2; }
+
+    /* ====== TABLA ====== */
+    .tableWrap { margin-top: 10px; overflow-x:auto; }
+    table { width:100%; border-collapse: collapse; margin-top: 10px; }
+    thead th {
+      text-align:left;
+      background:#f2f2f2;
+      border-bottom: 1px solid #ddd;
+      padding: 12px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    tbody td {
+      border-bottom: 1px solid #eee;
+      padding: 12px;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+    tbody tr:hover { background:#fafafa; }
+
+    /* Tags / badges */
+    .tag { font-size:12px; padding:3px 10px; border-radius:20px; background:#eee; display:inline-block; }
+    .tag-ok { background:#e6f4ea; }
+    .tag-bad { background:#ffe2e2; }
+
+    /* Botones en la tabla */
+    .acciones { display:flex; gap:8px; flex-wrap:wrap; }
+    .btnMini { padding:8px 10px; border-radius:8px; cursor:pointer; border:0; }
+    .btnPrestar { background:#6c757d; color:#fff; }
+    .btnDevolver { background:#198754; color:#fff; }
+    .btnEliminar { background:#dc3545; color:#fff; }
+
+    /* Mensaje cuando no hay libros */
+    .empty { color:#777; margin-top: 10px; font-size: 14px; }
   </style>
 </head>
 
@@ -41,7 +71,26 @@
     </div>
 
     <h2>Lista de libros</h2>
-    <ul id="listaLibros"></ul>
+
+    <!-- Mensaje cuando la tabla está vacía -->
+    <p id="msgVacio" class="empty">No hay libros aún. Agrega el primero arriba ☝️</p>
+
+    <!-- TABLA -->
+    <div class="tableWrap">
+      <table id="tablaLibros" style="display:none;">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Género</th>
+            <th>Año</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="cuerpoTabla"></tbody>
+      </table>
+    </div>
   </div>
 
   <script src="app.js"></script>
